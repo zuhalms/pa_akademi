@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Placeholder logo for IAIN Palopo — simple, permissive SVG you can replace with official artwork -->
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <defs>
+    <style>
+      .bg{fill:#0b6e4f}
+      .mark{fill:#fff}
+      .text{fill:#0b6e4f;font-family:Segoe UI, Roboto, Arial, sans-serif;font-weight:700}
+    </style>
+  </defs>
+  <rect width="240" height="240" rx="20" ry="20" fill="#fff"/>
+  <circle class="bg" cx="80" cy="80" r="52" />
+  <path class="mark" d="M68 60c6-8 18-10 26-5 8 5 10 16 5 24-6 9-18 11-27 6-9-5-12-17-4-25z"/>
+  <rect x="58" y="110" width="44" height="6" rx="2" fill="#0b6e4f" />
+  <g transform="translate(120,36)">
+    <text x="0" y="55" class="text" font-size="30">IAIN</text>
+    <text x="0" y="88" fill="#666" font-size="16" font-family="Segoe UI, Roboto, Arial, sans-serif">Palopo</text>
+  </g>
+</svg>

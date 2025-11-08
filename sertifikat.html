@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sertifikat Prestasi - Salsabila Syamsuddin</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .certificate-container {
+            width: 1000px;
+            height: 707px; /* A4 landscape ratio */
+            background: white;
+            border: 20px solid #049D6F;
+            border-radius: 15px;
+            padding: 50px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .certificate-border {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 30px;
+            border: 3px solid #d4af37;
+            border-radius: 10px;
+        }
+        
+        .certificate-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #049D6F 0%, #037a59 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .header {
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            color: #049D6F;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        
+        .body-text {
+            margin: 30px 0;
+        }
+        
+        .body-text p {
+            font-size: 18px;
+            color: #444;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .recipient-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            color: #2c3e50;
+            margin: 25px 0;
+            font-weight: 700;
+            text-decoration: underline;
+            text-decoration-color: #d4af37;
+            text-underline-offset: 10px;
+        }
+        
+        .achievement {
+            font-size: 22px;
+            color: #049D6F;
+            font-weight: 600;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        .institution {
+            font-size: 18px;
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+        
+        .signature {
+            text-align: center;
+        }
+        
+        .signature-line {
+            width: 200px;
+            border-top: 2px solid #333;
+            margin: 60px auto 10px;
+        }
+        
+        .signature-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .signature-title {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .date {
+            position: absolute;
+            bottom: 60px;
+            left: 50px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .certificate-number {
+            position: absolute;
+            bottom: 60px;
+            right: 50px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .ornament {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 3px solid #d4af37;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: #d4af37;
+        }
+        
+        .ornament-tl {
+            top: 45px;
+            left: 45px;
+        }
+        
+        .ornament-tr {
+            top: 45px;
+            right: 45px;
+        }
+        
+        .ornament-bl {
+            bottom: 45px;
+            left: 45px;
+        }
+        
+        .ornament-br {
+            bottom: 45px;
+            right: 45px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .certificate-container {
+                box-shadow: none;
+                width: 100%;
+                height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-container">
+        <div class="certificate-border"></div>
+        
+        <!-- Ornaments -->
+        <div class="ornament ornament-tl">✦</div>
+        <div class="ornament ornament-tr">✦</div>
+        <div class="ornament ornament-bl">✦</div>
+        <div class="ornament ornament-br">✦</div>
+        
+        <div class="certificate-content">
+            <div>
+                <div class="logo">🏆</div>
+                
+                <div class="header">
+                    <h1>SERTIFIKAT PRESTASI</h1>
+                    <p>Certificate of Achievement</p>
+                </div>
+                
+                <div class="body-text">
+                    <p>Diberikan kepada:</p>
+                </div>
+                
+                <div class="recipient-name">
+                    Salsabila Syamsuddin
+                </div>
+                
+                <div class="achievement">
+                    Sebagai<br>
+                    <strong style="font-size: 28px; color: #d4af37;">PESERTA TERBAIK</strong><br>
+                    Debat Nasional 2024
+                </div>
+                
+                <div class="institution">
+                    Universitas Islam Negeri Kota Palopo
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="signature">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Dr. H. Abdul Wahid, M.Ag</div>
+                    <div class="signature-title">Rektor UIN Palopo</div>
+                </div>
+                
+                <div class="signature">
+                    <div class="signature-line"></div>
+                    <div class="signature-name">Prof. Dr. Hj. Nurdin K., M.Ag</div>
+                    <div class="signature-title">Ketua Panitia</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="date">Palopo, 8 November 2024</div>
+        <div class="certificate-number">No: 001/CERT/DN/XI/2024</div>
+    </div>
+    
+    <script>
+        // Auto print dialog (optional)
+        // window.onload = function() {
+        //     setTimeout(function() {
+        //         window.print();
+        //     }, 500);
+        // }
+    </script>
+</body>
+</html>
