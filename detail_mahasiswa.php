@@ -309,7 +309,7 @@ $jumlah_notif_nilai = $result_nilai_bermasalah ? $result_nilai_bermasalah->num_r
         </ol>
     </nav>
     
-    <!-- Tombol Cetak (Dropdown) -->
+    <!-- Tombol Cetak (Dropdown) - DITAMBAHKAN CETAK KONSULTASI JUDUL -->
     <div class="btn-group">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: var(--campus-green); border-color: var(--campus-green);">
             <i class="bi bi-printer me-2"></i>Cetak Dokumen
@@ -318,6 +318,11 @@ $jumlah_notif_nilai = $result_nilai_bermasalah ? $result_nilai_bermasalah->num_r
             <li>
                 <a class="dropdown-item" href="cetak_laporan_lengkap.php?nim=<?= $mahasiswa['nim']; ?>" target="_blank">
                     <i class="bi bi-file-earmark-text me-2"></i>Cetak Laporan Lengkap
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="cetak_konsultasi_judul.php?nim=<?= $mahasiswa['nim']; ?>" target="_blank">
+                    <i class="bi bi-chat-square-text me-2"></i>Cetak Konsultasi Judul
                 </a>
             </li>
             <li>
@@ -718,7 +723,7 @@ $jumlah_notif_nilai = $result_nilai_bermasalah ? $result_nilai_bermasalah->num_r
                             <label class="form-check-label" for="<?= $checkbox_id ?>"><?= htmlspecialchars($item); ?></label>
                         </div>
                         <div class="date-container mt-2" style="display: <?= $is_checked ? 'block' : 'none' ?>;">
-                                                        <label for="tanggal_<?= $checkbox_id ?>" class="form-label small text-muted">Tanggal Selesai</label>
+                            <label for="tanggal_<?= $checkbox_id ?>" class="form-label small text-muted">Tanggal Selesai</label>
                             <input type="date" class="form-control form-control-sm" id="tanggal_<?= $checkbox_id ?>" name="tanggal_pencapaian[<?= htmlspecialchars($item); ?>]" value="<?= $tanggal_selesai_raw ?>">
                         </div>
                     </div>
