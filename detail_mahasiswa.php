@@ -493,77 +493,85 @@ $jumlah_notif_nilai = $result_nilai_bermasalah ? $result_nilai_bermasalah->num_r
                             </form>
                         </div>
                         
-                        <!-- TAB KONSULTASI JUDUL BARU -->
-                        <div class="tab-pane fade" id="tab-konsultasi-judul">
-                            <h6><i class="bi bi-chat-square-text me-2"></i>Riwayat Konsultasi Judul</h6>
-                            <p class="text-muted small">Mahasiswa telah mengajukan konsultasi judul. Anda dapat memberikan tanggapan di bawah.</p>
-                            
-                            <?php if ($jumlah_konsultasi_judul > 0): ?>
-                                <?php mysqli_data_seek($result_konsultasi_judul, 0); while($konsul = $result_konsultasi_judul->fetch_assoc()): ?>
-                                <div class="card mb-3" style="border-left: 4px solid <?= $konsul['status'] == 'Disetujui' ? '#10b981' : ($konsul['status'] == 'Ditolak' ? '#ef4444' : '#fbbf24'); ?>;">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <h6 class="fw-bold mb-0"><?= htmlspecialchars($konsul['judul_usulan']); ?></h6>
-                                            <span class="badge bg-<?= $konsul['status'] == 'Disetujui' ? 'success' : ($konsul['status'] == 'Ditolak' ? 'danger' : ($konsul['status'] == 'Revisi' ? 'info' : 'warning')) ?>">
-                                                <?= $konsul['status']; ?>
-                                            </span>
-                                        </div>
-                                        
-                                        <?php if (!empty($konsul['deskripsi'])): ?>
-                                        <div class="mb-3">
-                                            <strong>Deskripsi:</strong>
-                                            <p class="mb-0 mt-1 text-muted"><?= nl2br(htmlspecialchars($konsul['deskripsi'])); ?></p>
-                                        </div>
-                                        <?php endif; ?>
-                                        
-                                        <small class="text-muted d-block mb-3">
-                                            <i class="bi bi-calendar3"></i> Diajukan: <?= date('d F Y, H:i', strtotime($konsul['tanggal_pengajuan'])); ?> WIB
-                                        </small>
-                                        
-                                        <!-- Form Tanggapan Dosen -->
-                                        <?php if ($konsul['status'] == 'Menunggu' || empty($konsul['catatan_dosen'])): ?>
-                                        <hr>
-                                        <form action="tanggapi_konsultasi.php" method="POST" class="mt-3">
-                                            <input type="hidden" name="id_konsultasi" value="<?= $konsul['id_konsultasi']; ?>">
-                                            <input type="hidden" name="nim" value="<?= $nim_mahasiswa; ?>">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold"><i class="bi bi-chat-left-quote me-2"></i>Tanggapan Anda:</label>
-                                                <textarea class="form-control" name="catatan_dosen" rows="4" placeholder="Berikan tanggapan Anda terhadap judul yang diajukan..." required></textarea>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label fw-bold"><i class="bi bi-check2-square me-2"></i>Status:</label>
-                                                <select class="form-select" name="status" required>
-                                                    <option value="">-- Pilih Status --</option>
-                                                    <option value="Disetujui">✅ Disetujui</option>
-                                                    <option value="Revisi">🔄 Perlu Revisi</option>
-                                                    <option value="Ditolak">❌ Ditolak</option>
-                                                </select>
-                                            </div>
-                                            <div class="d-grid">
-                                                <button type="submit" class="btn btn-primary" style="background-color: var(--campus-green); border-color: var(--campus-green);">
-                                                    <i class="bi bi-send me-2"></i>Kirim Tanggapan
-                                                </button>
-                                            </div>
-                                        </form>
-                                        <?php else: ?>
-                                        <div class="alert alert-info mb-0">
-                                            <strong><i class="bi bi-chat-left-quote me-2"></i>Tanggapan Anda:</strong>
-                                            <p class="mb-2 mt-2"><?= nl2br(htmlspecialchars($konsul['catatan_dosen'])); ?></p>
-                                            <small class="text-muted">
-                                                <i class="bi bi-clock"></i> <?= date('d F Y, H:i', strtotime($konsul['tanggal_respon'])); ?> WIB
-                                            </small>
-                                        </div>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <?php endwhile; ?>
-                            <?php else: ?>
-                                <div class="text-center py-4">
-                                    <i class="bi bi-inbox" style="font-size: 3rem; color: #cbd5e0;"></i>
-                                    <p class="text-muted mt-2 mb-0">Mahasiswa ini belum mengajukan konsultasi judul</p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
+<!-- TAB KONSULTASI JUDUL BARU -->
+<div class="tab-pane fade" id="tab-konsultasi-judul">
+    <h6><i class="bi bi-chat-square-text me-2"></i>Riwayat Konsultasi Judul</h6>
+    <p class="text-muted small">Mahasiswa telah mengajukan konsultasi judul. Anda dapat memberikan tanggapan di bawah.</p>
+    
+    <?php if ($jumlah_konsultasi_judul > 0): ?>
+        <?php mysqli_data_seek($result_konsultasi_judul, 0); while($konsul = $result_konsultasi_judul->fetch_assoc()): ?>
+        <div class="card mb-3" style="border-left: 4px solid <?= $konsul['status'] == 'Disetujui' ? '#10b981' : ($konsul['status'] == 'Ditolak' ? '#ef4444' : '#fbbf24'); ?>;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h6 class="fw-bold mb-0"><?= htmlspecialchars($konsul['judul_usulan']); ?></h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-<?= $konsul['status'] == 'Disetujui' ? 'success' : ($konsul['status'] == 'Ditolak' ? 'danger' : ($konsul['status'] == 'Revisi' ? 'warning' : 'secondary')); ?>">
+                            <?= $konsul['status']; ?>
+                        </span>
+                        <!-- [TOMBOL HAPUS BARU] -->
+                        <button type="button" class="btn btn-sm btn-danger" 
+                                onclick="hapusKonsultasi(<?= $konsul['id_konsultasi']; ?>, '<?= addslashes(htmlspecialchars($konsul['judul_usulan'])); ?>')"
+                                title="Hapus Konsultasi">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <?php if (!empty($konsul['deskripsi'])): ?>
+                <div class="mb-3">
+                    <strong>Deskripsi:</strong>
+                    <p class="mb-0 mt-1 text-muted"><?= nl2br(htmlspecialchars($konsul['deskripsi'])); ?></p>
+                </div>
+                <?php endif; ?>
+                
+                <small class="text-muted d-block mb-3">
+                    <i class="bi bi-calendar3"></i> Diajukan: <?= date('d F Y, H:i', strtotime($konsul['tanggal_pengajuan'])); ?> WIB
+                </small>
+                
+                <!-- Form Tanggapan Dosen -->
+                <?php if ($konsul['status'] == 'Menunggu' || empty($konsul['catatan_dosen'])): ?>
+                <hr>
+                <form action="tanggapi_konsultasi.php" method="POST" class="mt-3">
+                    <input type="hidden" name="id_konsultasi" value="<?= $konsul['id_konsultasi']; ?>">
+                    <input type="hidden" name="nim" value="<?= $nim_mahasiswa; ?>">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-chat-left-quote me-2"></i>Tanggapan Anda:</label>
+                        <textarea class="form-control" name="catatan_dosen" rows="4" placeholder="Berikan tanggapan Anda terhadap judul yang diajukan..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-check2-square me-2"></i>Status:</label>
+                        <select class="form-select" name="status" required>
+                            <option value="">-- Pilih Status --</option>
+                            <option value="Disetujui">✅ Disetujui</option>
+                            <option value="Revisi">🔄 Perlu Revisi</option>
+                            <option value="Ditolak">❌ Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" style="background-color: var(--campus-green); border-color: var(--campus-green);">
+                            <i class="bi bi-send me-2"></i>Kirim Tanggapan
+                        </button>
+                    </div>
+                </form>
+                <?php else: ?>
+                <div class="alert alert-info mb-0">
+                    <strong><i class="bi bi-chat-left-quote me-2"></i>Tanggapan Anda:</strong>
+                    <p class="mb-2 mt-2"><?= nl2br(htmlspecialchars($konsul['catatan_dosen'])); ?></p>
+                    <small class="text-muted">
+                        <i class="bi bi-clock"></i> <?= date('d F Y, H:i', strtotime($konsul['tanggal_respon'])); ?> WIB
+                    </small>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <div class="text-center py-4">
+            <i class="bi bi-inbox" style="font-size: 3rem; color: #cbd5e0;"></i>
+            <p class="text-muted mt-2 mb-0">Mahasiswa ini belum mengajukan konsultasi judul</p>
+        </div>
+    <?php endif; ?>
+</div>
                         
                         <div class="tab-pane fade" id="tab-lapor-nilai">
                             <h6><i class="bi bi-journal-x me-2"></i>Lapor Nilai Bermasalah (C/D/E)</h6>
@@ -894,6 +902,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
+// [KODE BARU] Fungsi untuk konfirmasi hapus konsultasi judul
+function hapusKonsultasi(id, judul) {
+    if (confirm('Apakah Anda yakin ingin menghapus konsultasi judul:\n"' + judul + '"?\n\nTindakan ini tidak dapat dibatalkan!')) {
+        window.location.href = 'hapus_konsultasi_judul.php?id=' + id + '&nim=<?= $nim_mahasiswa; ?>';
+    }
+}
 </script>
 
 <?php

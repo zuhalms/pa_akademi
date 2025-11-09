@@ -2,36 +2,41 @@
 // ===================================================================
 // == BAGIAN LOGIKA PHP ANDA
 // ===================================================================
+
+// Pastikan session sudah dimulai
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+
+// Cek apakah user sudah login
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-$user_name = '';
-if (isset($_SESSION['user_role'])) {
-    
-    // ================= KONEKSI DATABASE =================
-    $host = "localhost";
-    $dbuser = "root";
-    $dbpass = "";
-    $dbname = "db_pa_akademi";
-    $conn = new mysqli($host, $dbuser, $dbpass, $dbname);
 
-    // Cek koneksi dan ambil nama user
+// ================= INCLUDE KONFIGURASI DATABASE =================
+// Gunakan config.php yang sudah ada (auto-detect environment)
+require_once __DIR__ . '/../config.php';
+
+// ================= AMBIL NAMA USER DARI DATABASE =================
+$user_name = '';
+
+if (isset($_SESSION['user_role'])) {
+    // Cek koneksi database
     if (!$conn->connect_error) {
         if ($_SESSION['user_role'] == 'dosen') {
             $stmt = $conn->prepare("SELECT nama_dosen FROM dosen WHERE id_dosen = ?");
             $stmt->bind_param("i", $_SESSION['user_id']);
             $stmt->execute();
-            $user_name = $stmt->get_result()->fetch_assoc()['nama_dosen'] ?? 'Dosen';
+            $result = $stmt->get_result()->fetch_assoc();
+            $user_name = $result['nama_dosen'] ?? 'Dosen';
             $stmt->close();
         } elseif ($_SESSION['user_role'] == 'mahasiswa') {
             $stmt = $conn->prepare("SELECT nama_mahasiswa FROM mahasiswa WHERE nim = ?");
             $stmt->bind_param("s", $_SESSION['user_id']);
             $stmt->execute();
-            $user_name = $stmt->get_result()->fetch_assoc()['nama_mahasiswa'] ?? 'Mahasiswa';
+            $result = $stmt->get_result()->fetch_assoc();
+            $user_name = $result['nama_mahasiswa'] ?? 'Mahasiswa';
             $stmt->close();
         }
         // JANGAN TUTUP $conn di sini karena masih dipakai di halaman utama
@@ -40,6 +45,8 @@ if (isset($_SESSION['user_role'])) {
         die("Koneksi ke database gagal di header.php: " . $conn->connect_error);
     }
 }
+
+// Tentukan link dashboard berdasarkan role
 $dashboard_link = ($_SESSION['user_role'] == 'dosen') ? 'dashboard_dosen.php' : 'dashboard_mahasiswa.php';
 
 

@@ -26,8 +26,19 @@ $total_mahasiswa = $total_mahasiswa_result->fetch_assoc()['total'];
 $perlu_perhatian_result = $conn->query("SELECT COUNT(nim) as total FROM mahasiswa WHERE id_dosen_pa = {$id_dosen_login} AND (ipk < 2.75 OR status = 'Non-Aktif')");
 $perlu_perhatian = $perlu_perhatian_result->fetch_assoc()['total'];
 
+// [MODIFIKASI] Gabungkan notifikasi logbook + konsultasi judul
 $notif_logbook_result = $conn->query("SELECT COUNT(DISTINCT nim_mahasiswa) as total FROM logbook WHERE id_dosen = {$id_dosen_login} AND pengisi = 'Mahasiswa' AND status_baca = 'Belum Dibaca'");
 $notif_logbook = $notif_logbook_result->fetch_assoc()['total'];
+
+// [KODE BARU] Hitung konsultasi judul yang belum ditanggapi
+$notif_konsultasi_judul = 0;
+if($conn->query("SHOW TABLES LIKE 'konsultasi_judul'")->num_rows > 0) {
+    $notif_konsultasi_result = $conn->query("SELECT COUNT(*) as total FROM konsultasi_judul kj JOIN mahasiswa m ON kj.nim = m.nim WHERE m.id_dosen_pa = {$id_dosen_login} AND kj.status = 'Menunggu'");
+    $notif_konsultasi_judul = $notif_konsultasi_result->fetch_assoc()['total'];
+}
+
+// [KODE BARU] Total notifikasi = logbook + konsultasi judul
+$total_notifikasi = $notif_logbook + $notif_konsultasi_judul;
 
 $mahasiswa_aktif_result = $conn->query("SELECT COUNT(nim) as total FROM mahasiswa WHERE id_dosen_pa = {$id_dosen_login} AND status = 'Aktif'");
 $mahasiswa_aktif = $mahasiswa_aktif_result->fetch_assoc()['total'];
@@ -65,7 +76,14 @@ if ($stmt_main) {
 }
 
 $result_angkatan = $conn->query("SELECT DISTINCT angkatan FROM mahasiswa WHERE id_dosen_pa = {$id_dosen_login} ORDER BY angkatan DESC");
-$result_sidebar_logbook = $conn->query("SELECT m.nim, m.nama_mahasiswa FROM logbook l JOIN mahasiswa m ON l.nim_mahasiswa = m.nim WHERE l.id_dosen = {$id_dosen_login} AND l.pengisi = 'Mahasiswa' AND l.status_baca = 'Belum Dibaca' GROUP BY m.nim, m.nama_mahasiswa LIMIT 5");
+$result_sidebar_logbook = $conn->query("SELECT m.nim, m.nama_mahasiswa FROM logbook l JOIN mahasiswa m ON l.nim_mahasiswa = m.nim WHERE l.id_dosen = {$id_dosen_login} AND l.pengisi = 'Mahasiswa' AND l.status_baca = 'Belum Dibaca' GROUP BY m.nim ORDER BY MAX(l.created_at) DESC LIMIT 5");
+
+// [KODE BARU] Ambil data konsultasi judul yang menunggu
+$result_sidebar_konsultasi = null;
+if($conn->query("SHOW TABLES LIKE 'konsultasi_judul'")->num_rows > 0) {
+    $result_sidebar_konsultasi = $conn->query("SELECT kj.nim, m.nama_mahasiswa, kj.judul_usulan, kj.tanggal_pengajuan FROM konsultasi_judul kj JOIN mahasiswa m ON kj.nim = m.nim WHERE m.id_dosen_pa = {$id_dosen_login} AND kj.status = 'Menunggu' ORDER BY kj.tanggal_pengajuan DESC LIMIT 5");
+}
+
 $result_sidebar_bermasalah = $conn->query("SELECT nim, nama_mahasiswa, ipk FROM mahasiswa WHERE id_dosen_pa = {$id_dosen_login} AND (ipk < 2.75 OR status = 'Non-Aktif') ORDER BY ipk ASC LIMIT 5");
 ?>
 
@@ -310,6 +328,11 @@ $result_sidebar_bermasalah = $conn->query("SELECT nim, nama_mahasiswa, ipk FROM 
         box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
     }
 
+    .badge.bg-info {
+        background-color: #3b82f6 !important;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+
     /* ========== BUTTON IMPROVEMENTS (3 TOMBOL HORIZONTAL) ========== */
     .btn {
         border-radius: 0.5rem;
@@ -414,6 +437,21 @@ $result_sidebar_bermasalah = $conn->query("SELECT nim, nama_mahasiswa, ipk FROM 
     .sidebar-widget .badge {
         font-size: 0.7rem;
         padding: 0.35rem 0.65rem;
+    }
+
+    /* [KODE BARU] Style untuk item konsultasi judul */
+    .konsultasi-item {
+        border-left: 3px solid #3b82f6 !important;
+    }
+
+    .konsultasi-item .judul-usulan {
+        font-size: 0.85rem;
+        color: #4b5563;
+        margin-top: 0.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     /* ========== EMPTY STATE ========== */
@@ -565,8 +603,8 @@ $result_sidebar_bermasalah = $conn->query("SELECT nim, nama_mahasiswa, ipk FROM 
         <div class="col-md-6 col-xl-3">
             <div class="summary-card bg-gradient-purple shadow-sm">
                 <div class="data">
-                    <h3><?= $notif_logbook; ?></h3>
-                    <p>Notifikasi Logbook</p>
+                    <h3><?= $total_notifikasi; ?></h3>
+                    <p>Notifikasi</p>
                 </div>
                 <div class="icon">
                     <i class="bi bi-bell-fill"></i>
@@ -745,34 +783,73 @@ $result_sidebar_bermasalah = $conn->query("SELECT nim, nama_mahasiswa, ipk FROM 
 
         <!-- Sidebar -->
         <div class="col-lg-4">
-            <!-- Logbook Widget -->
+            <!-- [MODIFIKASI] Widget Notifikasi (Logbook + Konsultasi Judul) -->
             <div class="card shadow-sm mb-4 sidebar-widget">
                 <div class="card-header">
                     <h6 class="mb-0">
-                        <i class="bi bi-chat-left-text-fill me-2" style="color: var(--campus-green);"></i>
-                        Logbook Belum Dibaca
-                        <?php if ($notif_logbook > 0): ?>
-                        <span class="badge bg-danger rounded-pill float-end"><?= $notif_logbook ?></span>
+                        <i class="bi bi-bell-fill me-2" style="color: var(--campus-green);"></i>
+                        Notifikasi
+                        <?php if ($total_notifikasi > 0): ?>
+                        <span class="badge bg-danger rounded-pill float-end"><?= $total_notifikasi ?></span>
                         <?php endif; ?>
                     </h6>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <?php if ($result_sidebar_logbook->num_rows > 0): 
+                    <?php 
+                    $has_notification = false;
+                    
+                    // Tampilkan Konsultasi Judul yang Menunggu
+                    if ($result_sidebar_konsultasi && $result_sidebar_konsultasi->num_rows > 0): 
+                        $has_notification = true;
+                        while($konsul = $result_sidebar_konsultasi->fetch_assoc()): 
+                    ?>
+                    <a href="detail_mahasiswa.php?nim=<?= $konsul['nim'] ?>" 
+                       class="list-group-item list-group-item-action konsultasi-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-chat-square-text me-2" style="color: #3b82f6;"></i>
+                                    <strong><?= htmlspecialchars($konsul['nama_mahasiswa']); ?></strong>
+                                </div>
+                                <div class="judul-usulan">
+                                    <?= htmlspecialchars($konsul['judul_usulan']); ?>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i> <?= date('d M Y', strtotime($konsul['tanggal_pengajuan'])); ?>
+                                </small>
+                            </div>
+                            <span class="badge bg-info ms-2">Konsultasi</span>
+                        </div>
+                    </a>
+                    <?php 
+                        endwhile;
+                    endif;
+                    
+                    // Tampilkan Logbook yang Belum Dibaca
+                    if ($result_sidebar_logbook->num_rows > 0): 
+                        $has_notification = true;
+                        mysqli_data_seek($result_sidebar_logbook, 0);
                         while($log = $result_sidebar_logbook->fetch_assoc()): 
                     ?>
                     <a href="detail_mahasiswa.php?nim=<?= $log['nim'] ?>" 
-                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                       class="list-group-item list-group-item-action">
                         <span>
-                            <i class="bi bi-person-circle me-2 text-muted"></i>
+                            <i class="bi bi-journal-text me-2 text-muted"></i>
                             <?= htmlspecialchars($log['nama_mahasiswa']); ?>
                         </span>
-                        <i class="bi bi-chevron-right text-muted"></i>
+                        <span class="badge bg-warning float-end">Logbook</span>
                     </a>
-                    <?php endwhile; else: ?>
+                    <?php 
+                        endwhile;
+                    endif;
+                    
+                    // Jika tidak ada notifikasi sama sekali
+                    if (!$has_notification): 
+                    ?>
                     <li class="list-group-item text-center">
                         <div class="empty-state py-3">
                             <i class="bi bi-check-circle" style="font-size: 2.5rem;"></i>
-                            <p class="mb-0 small">Semua logbook sudah dibaca</p>
+                            <p class="mb-0 small">Tidak ada notifikasi baru</p>
                         </div>
                     </li>
                     <?php endif; ?>
