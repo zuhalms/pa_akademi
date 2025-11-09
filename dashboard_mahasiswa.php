@@ -948,7 +948,7 @@ if ($jumlah_notif_logbook > 0) {
                         <div class="accordion-body" style="max-height: 300px; overflow-y: auto;">
                                <?php if (!empty($evaluasi_per_periode)): foreach($evaluasi_per_periode as $periode => $evaluasi): ?>
                                 <div class="mb-3"><strong>Periode: <?= htmlspecialchars($periode); ?></strong><ul class="list-group list-group-flush mt-2">
-                                    <?php foreach($evaluasi as $item): ?><li class="list-group-item d-flex justify-content-between"><?= htmlspecialchars($item['kategori']); ?><span class="badge bg-primary"><?= htmlspecialchars($item['nilai']); ?></span></li><?php endforeach; ?>
+                                    <?php foreach($evaluasi as $item): ?><li class="list-group-item d-flex justify-content-between"><?= htmlspecialchars($item['kategori']); ?><span class="badge bg-primary rounded-pill">Skor: <?= $item['skor']; ?></span></li><?php endforeach; ?>
                                 </ul></div>
                             <?php endforeach; else: ?><p class="text-center text-muted">Belum ada hasil evaluasi.</p><?php endif; ?>
                         </div>
